@@ -1,0 +1,29 @@
+{% extends "bare.html" %}
+
+{% block body %}
+
+
+
+
+<div class="container">
+<h2>Question {{qnId}}</h2>
+    <p>Select your budget</p>
+  <form role="form" method="POST">
+    <div class="radio">
+      <label><input type="radio" name="budget" value = "1000">0-1000</label>
+    </div>
+    <div class="radio">
+      <label><input type="radio" name="budget" value = "2000">1000-2000</label>
+    </div>
+    <div class="radio">
+      <label><input type="radio" name="budget" value = "10000">2000-10000</label>
+    </div>
+      <button type="submit" name= "nextbtn" value = "next" >Next</button>
+  </form>
+</div>
+
+
+
+
+
+{% endblock %}

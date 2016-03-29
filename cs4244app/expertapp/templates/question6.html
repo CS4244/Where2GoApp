@@ -1,0 +1,26 @@
+{% extends "bare.html" %}
+
+{% block body %}
+
+
+
+
+<div class="container">
+<h2>Question {{qnId}}</h2>
+    <p>Do you prefer outdoor activities?</p>
+  <form role="form" method="POST">
+    <div class="radio">
+      <label><input type="radio" name="outdoorActivity" value = "yes">Yes</label>
+    </div>
+    <div class="radio">
+      <label><input type="radio" name="outdoorActivity" value = "no">No</label>
+    </div>
+      <button type="submit" name= "nextbtn" value = "next" >Next</button>
+  </form>
+</div>
+
+
+
+
+
+{% endblock %}

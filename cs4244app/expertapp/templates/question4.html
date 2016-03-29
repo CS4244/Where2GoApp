@@ -1,0 +1,26 @@
+{% extends "bare.html" %}
+
+{% block body %}
+
+
+
+
+<div class="container">
+<h2>Question {{qnId}}</h2>
+    <p>What is your purpose of visit?</p>
+  <form role="form" method="POST">
+    <div class="radio">
+      <label><input type="radio" name="visit" value = "adventure">Adventure</label>
+    </div>
+    <div class="radio">
+      <label><input type="radio" name="visit" value = "pleasure">Pleasure</label>
+    </div>
+      <button type="submit" name= "nextbtn" value = "next" >Next</button>
+  </form>
+</div>
+
+
+
+
+
+{% endblock %}
