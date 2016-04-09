@@ -81,36 +81,27 @@
 (checkweather on)
 ?desired <- (desired (weather ?desiredW))
 ?destination <- (destination (weather ?destW))
+(test (neq ?desiredW ?destW) )
 =>
-(if (= (str-compare ?desiredW ?destW) 0)
-	then
-	else
 	(retract ?destination)
-)
 )
 
 (defrule fireEnglishFilter
-(checkenglish on)
+(checkenglishSpeaking on)
 ?desired <- (desired (englishSpeaking ?desiredE))
 ?destination <- (destination (englishSpeaking ?destE))
+(test (neq ?desiredE ?destE) )
 =>
-(if (= (str-compare ?desiredE ?destE) 0)
-	then
-	else
 	(retract ?destination)
-)
 )
 
 (defrule fireRegionFilter
 (checkregion on)
 ?desired <- (desired (region ?desiredR))
 ?destination <- (destination (region ?destR))
+(test (neq ?desiredR ?destR) )
 =>
-(if (= (str-compare ?desiredR ?destR) 0)
-	then
-	else
-	(retract ?destination)
-)
+(retract ?destination)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -118,7 +109,7 @@
 (defrule fireWeatherQuestion
 ?desired <- (desired (weather "NULL"))
 =>
-(assert (ask (question "What is your ideal weather") (choice "hot" "warm" "mild" "cold") (slotName "weather")))
+(assert (ask (question "What is your ideal weather") (choice "Hot" "Warm" "Mild" "Cold") (slotName "weather")))
 )
 
 (defrule fireEnglishSpeakingQuestion
