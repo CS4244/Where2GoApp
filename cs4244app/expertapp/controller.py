@@ -3,7 +3,8 @@ import clips
 import sys
 import cStringIO
 import os
-qnId = -1
+
+qnId = 1
 
 expertapp = Blueprint('expertapp', __name__, template_folder='templates')
 
@@ -14,6 +15,16 @@ stdout_ = sys.stdout  # Keep track of the previous value.
 # test = getChoiceInAskFact()
 # for i in test:
 #     print i
+
+def printFacts():
+    stdout_ = sys.stdout
+    stream = cStringIO.StringIO()
+    sys.stdout = stream
+    clips.PrintFacts()
+    facts = stream.getvalue()
+    sys.stdout = stdout_
+    return facts
+
 
 def isQuestionTypeRadioInAskFact():
     questionType = findAskFact().Slots['questionType']
@@ -58,14 +69,21 @@ def index():
 
     return render_template('begin.html')
 
+@expertapp.route('/end', methods=['GET', 'POST'])  # localhost:5000/expertapp/
+def end():
+    factResult = printFacts().split('\n')
+    if request.method == 'POST':
+        return redirect(url_for('expertapp.index'))
+    return render_template('end.html', factResult = factResult)
+
 
 @expertapp.route('/question', methods=['GET', 'POST'])  # localhost:5000/expertapp/question1
 def question1():
     global qnId
-    clips.PrintFacts()
+    factResult = printFacts().split('\n')
 
     if findAskFact() is None:
-        return redirect(url_for('expertapp.index'))
+        return redirect(url_for('expertapp.end'))
 
 
     # aaa = findDesiredFact()
@@ -87,11 +105,12 @@ def question1():
         toModify = '(modify ' + str(findDesiredFact().Index) + ' (' + dictKey + combinedSlots + '))'
         clips.SendCommand(toModify)
         findAskFact().Retract()
+        clips.Assert("(check"+dictKey+" on)")
         clips.Run()
-        clips.PrintFacts()
         return redirect(url_for('expertapp.question1'))
     return render_template('question.html', qnId=qnId, choiceList=getChoiceInAskFact(), question=getQuestionInAskFact(),
-                           slotName=getSlotTypeInAskFact(), questionType=isQuestionTypeRadioInAskFact())
+                           slotName=getSlotTypeInAskFact(), questionType=isQuestionTypeRadioInAskFact(),
+                           factResult=factResult)
 
 
 @expertapp.route('/question2', methods=['GET', 'POST'])  # localhost:5000/expertapp/question2

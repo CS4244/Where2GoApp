@@ -1,0 +1,19 @@
+{% extends "bare.html" %}
+
+{% block body %}
+
+
+<div class="container">
+
+    <p></p>
+    {% for i in factResult %}
+    {{i}}
+    <br />
+    {% endfor %}
+    <form role="form" method="POST">
+    <button type="submit" value="next">Restart</button>
+    </form>
+</div>
+
+
+{% endblock %}
