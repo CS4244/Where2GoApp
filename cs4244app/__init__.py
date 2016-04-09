@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from cs4244app.expertapp.controller import expertapp
+from expertapp.controller import expertapp
 import os
 
 app = Flask(__name__)
