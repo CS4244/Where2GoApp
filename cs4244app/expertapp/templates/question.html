@@ -1,0 +1,29 @@
+{% extends "bare.html" %}
+
+{% block body %}
+
+
+<div class="container">
+    <h2>Question {{qnId}}</h2>
+
+    <p>{{question}}</p>
+
+    <form role="form" method="POST">
+        {% for choice in choiceList %}
+        {% if questionType%}
+        <div class="radio">
+            <label><input type="radio" name="{{slotName}}" value="{{choice}}">{{choice}}</label>
+        </div>
+        {% else %}
+        <div class="checkbox">
+            <label><input type="checkbox" name="{{slotName}}" value="{{choice}}">{{choice}}</label>
+        </div>
+        {% endif %}
+
+        {% endfor %}
+        <button type="submit" value="next">Next</button>
+    </form>
+</div>
+
+
+{% endblock %}
