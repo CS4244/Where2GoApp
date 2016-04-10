@@ -4,11 +4,9 @@ import sys
 import cStringIO
 import os
 
-
-
 expertapp = Blueprint('expertapp', __name__, template_folder='templates')
 
-stdout_ = sys.stdout  # Keep track of the previous value.
+intFact = ['budget', 'daysReq']
 
 # getting questions
 # print(getQuestionInAskFact())
@@ -71,6 +69,7 @@ def index():
 def end():
     session.pop('start', None)
     factResult = printFacts().split('\n')
+    clips.ShowGlobals()
     if request.method == 'POST':
         return redirect(url_for('expertapp.index'))
     return render_template('end.html', factResult=factResult)
@@ -83,7 +82,7 @@ def question1():
 
     if findAskFact() is None:
         return redirect(url_for('expertapp.end'))
-    if not('start' in session):
+    if not ('start' in session):
         return redirect(url_for('expertapp.index'))
 
     # aaa = findDesiredFact()
@@ -99,12 +98,22 @@ def question1():
             return render_template('question.html', choiceList=getChoiceInAskFact(),
                                    question=getQuestionInAskFact(),
                                    slotName=getSlotTypeInAskFact(), questionType=getQuestionTypeInAskFact(),
-                                   factResult=factResult, error = True)
+                                   factResult=factResult, error=True, errorMsg="Please Make A Choice")
         dictKey = list(request.form.keys())[0]
         combinedSlots = ' '
         valueList = request.form.getlist(dictKey)
         for i in valueList:
-            combinedSlots += '"' + i + '"'
+            if not dictKey in intFact:
+                combinedSlots += '"' + i + '"'
+            else:
+                if not i.isdigit():
+                    return render_template('question.html', choiceList=getChoiceInAskFact(),
+                                           question=getQuestionInAskFact(),
+                                           slotName=getSlotTypeInAskFact(), questionType=getQuestionTypeInAskFact(),
+                                           factResult=factResult, error=True,
+                                           errorMsg="Only Numeric Values Are Allowed")
+                combinedSlots += i
+
         toModify = '(modify ' + str(findDesiredFact().Index) + ' (' + dictKey + combinedSlots + '))'
         clips.SendCommand(toModify)
         findAskFact().Retract()
@@ -112,8 +121,10 @@ def question1():
         clips.Run()
         clips.DebugConfig.ActivationsWatched = True
         clips.DebugConfig.FactsWatched = True
+        clips.DebugConfig.RulesWatched = True
         t = clips.TraceStream.Read()
         print t
+        clips.ShowGlobals()
         clips.PrintFacts()
         return redirect(url_for('expertapp.question1'))
     return render_template('question.html', choiceList=getChoiceInAskFact(), question=getQuestionInAskFact(),
