@@ -4,29 +4,41 @@
 
 
 <div class="container">
-    <h2>Question {{qnId}}</h2>
+    <h2>Question</h2>
 
     <p>{{question}}</p>
 
     <form role="form" method="POST">
         {% for choice in choiceList %}
-        {% if questionType%}
+        {% if questionType == 'RADIO'%}
         <div class="radio">
             <label><input type="radio" name="{{slotName}}" value="{{choice}}">{{choice}}</label>
         </div>
-        {% else %}
+        {% elif questionType == 'CHECKBOX' %}
         <div class="checkbox">
             <label><input type="checkbox" name="{{slotName}}" value="{{choice}}">{{choice}}</label>
         </div>
+        {% else %}
+        <div class="col-xs-2">
+            <input type="text" class="form-control" name="{{slotName}}">
+        </div>
         {% endif %}
-
         {% endfor %}
-        <button type="submit" value="next">Next</button>
+
+        <button type="submit" value="next" >Next</button>
+
     </form>
+    {% if error %}
+    <br/>
+
+    <div class="alert alert-danger">
+        Please make a choice.
+    </div>
+    {% endif %}
     <p></p>
     {% for i in factResult %}
     {{i}}
-    <br />
+    <br/>
     {% endfor %}
 </div>
 
