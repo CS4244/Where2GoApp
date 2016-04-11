@@ -12,21 +12,21 @@
         {% for choice in choiceList %}
         {% if questionType == 'RADIO'%}
         <div class="radio">
-            <label><input type="radio" name="{{slotName}}" value="{{choice}}">{{choice}}</label>
+            <label><input type="radio" name="{{slotName}}" id ="radio" value="{{choice}}" >{{choice}}</label>
         </div>
         {% elif questionType == 'CHECKBOX' %}
         <div class="checkbox">
-            <label><input type="checkbox" name="{{slotName}}" value="{{choice}}">{{choice}}</label>
+            <label><input type="checkbox" name="{{slotName}}" id ="checkbox" value="{{choice}}">{{choice}}</label>
         </div>
         {% else %}
         <div class="col-xs-2">
-            <input type="text" class="form-control" name="{{slotName}}">
+            <input type="text" class="form-control" id ="textbox" name="{{slotName}}">
         </div>
 
         {% endif %}
         {% endfor %}
 
-        <button type="submit" value="next" >Next</button>
+        <button type="submit" id="nextBtn" value="next" >Next</button>
 
     </form>
     {% if error %}
