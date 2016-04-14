@@ -17,6 +17,7 @@ __author__ = 'GARY WONG'
 ########################################################################################################
 def killPhantomJs():
     os.system('taskkill /f /im phantomjs.exe')
+    os.system('taskkill /f /im Xvfb.exe')
 
 def getBeginField(driver):
     return driver.find_element_by_css_selector('#beginBtn')
@@ -82,10 +83,8 @@ def isCheckBoxPresent(driver):
 
 ########################################################################################################
 def main():
-    dCap = dict(DesiredCapabilities.PHANTOMJS)
-    dCap['phantomjs.page.settings.useragent'] = ( 'mozilla/5.0 (windows nt 6.3; wow64) applewebkit/537.36 (khtml, like gecko) chrome/43.0.2357.81 safari/537.36')
-    driver = webdriver.PhantomJS(executable_path="d:\install location\phantomjs\\bin\phantomjs.exe",
-                                 desired_capabilities=dCap)
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     # driver = webdriver.Firefox()
 
     driver.get("http://localhost:5000/expertapp/")

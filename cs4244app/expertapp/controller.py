@@ -14,6 +14,13 @@ intFact = ['budget', 'daysReq']
 # for i in test:
 #     print i
 
+def findDestinationCountFact():
+    for i in clips.FactList():
+        if i.Relation == clips.Symbol('destinationCount'):
+            return i
+    return None
+
+
 def printFacts():
     stdout_ = sys.stdout
     stream = cStringIO.StringIO()
@@ -74,14 +81,25 @@ def end():
         return redirect(url_for('expertapp.index'))
     return render_template('end.html', factResult=factResult)
 
+@expertapp.route('/end2', methods=['GET', 'POST'])  # localhost:5000/expertapp/
+def end2():
+    session.pop('start', None)
+    factResult = printFacts().split('\n')
+    clips.ShowGlobals()
+    if request.method == 'POST':
+        return redirect(url_for('expertapp.index'))
+    return render_template('end.html', factResult=factResult)
+
 
 @expertapp.route('/question', methods=['GET', 'POST'])  # localhost:5000/expertapp/question1
 def question1():
     factResult = printFacts().split('\n')
     print(len(factResult))
 
-    if findAskFact() is None:
+    if findDestinationCountFact().Slots['count'] == 0 or findDestinationCountFact().Slots['count'] == 1:
         return redirect(url_for('expertapp.end'))
+    if findDestinationCountFact().Slots['count'] > 1 and findAskFact() is None:
+        return redirect(url_for('expertapp.end2'))
     if not ('start' in session):
         return redirect(url_for('expertapp.index'))
 
