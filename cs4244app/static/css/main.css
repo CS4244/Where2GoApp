@@ -66,6 +66,8 @@ button {
     overflow: hidden;
     font-size: 2em;
     padding:0 40px;
+    outline-color: black;
+    outline:0 !important;
 }
 
 button:hover{
@@ -93,9 +95,78 @@ label:hover {
 	margin-left:6%;
 }
 
+.end {
+	font-size:1.5em;
+	color:white;
+	margin-top:5px;
+}
 
 
+.result-picture {
+	width:400px;
+	height:300px;
+	margin:0;
+	padding:0;
+	background: url(../country_img/abudhabi.jpg);
+	-webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+  	background-size: cover;
 
+  	color:white;
 
+}
 
+.result-container {
+	position:absolute;
+	width:400px;
+	height:600px;
+	top:30%;
+	left:50%;
+
+	margin-top:-125px;
+	margin-left:-200px;
+
+	border-radius:5px;
+	background: rgba(255,255,255,1);
+	padding:0px;
+	text-align:center;
+
+	color: #404040;
+}
+
+.darken {    
+	background:rgba(0,0,0,0.6);
+}
+
+p {
+	color: #297CBB !important;
+	font-weight: bold;
+	font-size: 1.2em;
+	font-style: normal;
+	margin: 10px 0 0 0;
+}
+
+.result-desc {
+	height:300px;
+	text-align: left;
+	padding: 15px;
+}
+
+span {
+	margin-right:20px;
+}
+
+h2 {
+	position:absolute;
+	width:100%;
+	font-weight:bold;
+	background: rgba(0,0,0,0.5);
+	margin:0px;
+}
+
+h4{
+	color:#ccc;
+	font-weight:normal;
+}
 
