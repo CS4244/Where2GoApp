@@ -1,14 +1,25 @@
+<!-- TO REMOVE AFTER DESIGN -START 
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+TO REMOVE AFTER DESIGN -END -->
+
 {% extends "bare.html" %}
 
 {% block body %}
 
-
 <div class="container">
-    <h2>Question</h2>
-
     <p>{{question}}</p>
 
-    <form role="form" method="POST">
+    <form role="form" method="POST" class="align-left">
         {% for choice in choiceList %}
         {% if questionType == 'RADIO'%}
         <div class="radio">
@@ -19,15 +30,14 @@
             <label><input type="checkbox" name="{{slotName}}" id ="checkbox" value="{{choice}}">{{choice}}</label>
         </div>
         {% else %}
-        <div class="col-xs-2">
+        <div class="col-xs-7">
             <input type="text" class="form-control" id ="textbox" name="{{slotName}}">
         </div>
 
         {% endif %}
         {% endfor %}
-
-        <button type="submit" id="nextBtn" value="next" >Next</button>
-
+        <br>
+        <button class="next" type="submit" id="nextBtn" value="next" >next</button>
     </form>
     {% if error %}
     <br/>

@@ -4,15 +4,94 @@
    Author's custom styles
    ========================================================================== */
 
+html, body {
+	font-family: Verdana, Geneva, sans-serif;
+	color:white;
 
+	height:100%;
+	width:100%;
+	margin:0;
+	padding:0;
+	border:0;
 
+	background: url(../img/background.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+  	background-size: cover;
+}
 
+.container {
+	position:absolute;
+	width:500px;
 
+	top:50%;
+	left:50%;
 
+	margin-top:-125px;
+	margin-left:-250px;
 
+	border-radius:5px;
+	background: rgba(0,0,0,0.6);
+	padding:15px;
+	text-align: center;
+}
 
+.no-bg {
+	background: rgba(0,0,0,0) !important;
+}
 
+h1 {
+	font-size:4em;
+    text-shadow: 1px 1px 1px #101010;
+}
 
+h5 {
+	text-align: left;
+	font-style:italic;
+	padding:0px;
+	margin-top:-10px;
+	margin-left:120px;
+	font-size:1.1em;
+	opacity:0.8;
+    text-shadow: 1px 1px 3px #101010;
+}
+
+button {
+	margin-top:25px;
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    cursor:pointer;
+    border-radius:10px;
+    overflow: hidden;
+    font-size: 2em;
+    padding:0 40px;
+}
+
+button:hover{
+	background-color: rgba(0,0,0,0.4);
+	color:#ccc;
+}
+
+p {
+	font-size:1.5em;
+	font-style:italic;
+	margin-bottom:20px;
+}
+
+.align-left {
+	margin-left:30%;
+	text-align:left;
+	color:#c0c0c0;
+}
+
+label:hover {
+	color:#fff;
+}
+
+.next {
+	margin-left:6%;
+}
 
 
 
