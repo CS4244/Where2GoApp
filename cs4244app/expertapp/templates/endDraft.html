@@ -17,47 +17,54 @@
 {% block body %}
 
 <div class="result-container">
-
+    {% if destinationList|length > 0 %}
+    {% for i in destinationList %}
 	<div class="result-picture">
-		<h2>#1<br>
-		<!--{% block %}-->
-		Abu Dhabi</h2>
+		<h2>#{{loop.index}}<br>
+
+<img src="{{ url_for('static', filename=i['picture']) }}"></img>
+
+
+		{{i['name']}}</h2>
 	</div>
 
 	<div class="result-desc">
 		<p>Leisure</p>
-				<!--{% block %}-->
-				<span>Casino</span>
-				<span>Spa</span>
-				<span>Shopping</span>
-				<span>Theme Park</span>
-				<span>Landmarks</span>
-				<span>Zoo</span>
-				<span>Museum</span>
-				<span>Dining</span>
+    
+       {% for j in i['leisure'] %}
+				<span>{{j}}</span>
+        <br />
+          {% endfor %}
+
 		<p>Water Activities</p>
-				<!--{% block %}-->
-				<span>Surfing</span>
-				<span>Snorkelling</span>
-				<span>Water Skiing</span>
-				<span>Water Park</span>
-				<span>Wind Surfing</span>
-				<span>Dolphin Encounter</span>	
+
+				  {% for j in i['waterActivity'] %}
+				<span>{{j}}</span>
+        <br />
+          {% endfor %}
+
 		<p>Outdoor Activites</p>
-				<!--{% block %}-->
-				<span>Mountain Biking</span>
-				<span>Rock Climbing</span>
-				<span>Hiking</span>
-				<span>Snow Skiing</span>
-				<span>Zip Line</span>
-				<span>Horseback Riding</span>
+	
+				  {% for j in i['outdoorActivity'] %}
+				<span>{{j}}</span>
+        <br />
+          {% endfor %}
 	</div>
 
+   <h4><i>This is our recommendation!<br>Thank you for using Where2Go.</i></h4>
+    {% endfor %}
+    
+    
+    {% else %}
+    <span>Sorry no result found</span>
+    <br />
+    {% endif %}
+    
     <form role="form" method="POST">
-    	<h4><i>This is our recommendation!<br>Thank you for using Where2Go.</i></h4>
-    	<button class="end" type="submit" value="next">restart</button>
-    	<button class="end" type="submit" value="next">home</button>
+      <button type="submit" id = "homeBtn" name= "homeBtn" value = "Home" >start</button>
     </form>
+    	
+
 </div>
 
 

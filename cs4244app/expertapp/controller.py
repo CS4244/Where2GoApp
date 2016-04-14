@@ -2,7 +2,9 @@ from flask import render_template, url_for, request, redirect, Blueprint, sessio
 import clips
 import sys
 import cStringIO
-import os
+import os, json
+invalidChars = ['-', ',', ' ', '.', '_']
+countriesImgPath = 'http://localhost:5000/static/img/countries/'
 
 expertapp = Blueprint('expertapp', __name__, template_folder='templates')
 
@@ -13,6 +15,14 @@ intFact = ['budget', 'daysReq']
 # test = getChoiceInAskFact()
 # for i in test:
 #     print i
+
+
+
+def getDestinationFact():
+    for i in clips.FactList():
+        if i.Relation == clips.Symbol('destination'):
+            return i
+    return None
 
 def findDestinationCountFact():
     for i in clips.FactList():
@@ -59,7 +69,63 @@ def findDesiredFact():
         if i.Relation == clips.Symbol('desired'):
             return i
 
+def setup():
+    countryDict = {}
+    for i in clips.FactList():
+        if i.Relation == clips.Symbol('destination'):
+            countryDict[i.Slots['name']] = 0
 
+    with open("countries.json", 'w') as outfile:
+        json.dump(countryDict, outfile, indent=1)
+
+def seleniumProcesses():
+    if session['count'] == 0 and (findDesiredFact().Slots['budget'] > 0 or findDesiredFact().Slots['daysReq'] > 0):
+        with open('fail.txt', 'a') as file:
+            file.write(findDesiredFact().PPForm())
+    if session['count'] > 1 and (not session['ask']):  # more than 1 destination and no questions remaining
+        countriesDict = {}
+        with open('countries.json') as file:
+            countriesDict = json.load(file)
+
+        for i in clips.FactList():
+            if i.Relation == clips.Symbol('destination'):
+                countriesDict[i.Slots['name']] += 1
+        with open("countries.json", 'w') as outfile:
+            json.dump(countriesDict, outfile, indent=1)
+
+def prepareForDisplay(destinationList):
+    for i in clips.FactList():
+        if i.Relation == clips.Symbol('destination'):
+            destinationDict = {}
+            strippedInvalidName = ''.join([j for j in i.Slots['name'] if j not in invalidChars])
+
+
+            destinationDict['picture'] = "img/countries/"+strippedInvalidName+".jpg"
+            destinationDict['leisure'] = []
+            destinationDict['waterActivity'] = []
+            destinationDict['outdoorActivity'] = []
+            for k in i.Slots['leisure']:
+                temp = ""
+                for j in k:
+                    temp += j
+                destinationDict['leisure'].append(temp)
+            for k in i.Slots['waterActivity']:
+                temp = ""
+                for j in k:
+                    temp += j
+                destinationDict['waterActivity'].append(temp)
+            for k in i.Slots['outdoorActivity']:
+                temp = ""
+                for j in k:
+                    temp += j
+                destinationDict['outdoorActivity'].append(temp)
+            temp = ""
+            for k in i.Slots['name']:
+                temp+= k
+            destinationDict['name'] = temp
+
+            destinationList.append(destinationDict)
+    print(destinationList)
 @expertapp.route('/', methods=['GET', 'POST'])  # localhost:5000/expertapp/
 def index():
     clips.Reset()
@@ -74,21 +140,25 @@ def index():
 
 @expertapp.route('/end', methods=['GET', 'POST'])  # localhost:5000/expertapp/
 def end():
-    session.pop('start', None)
-    factResult = printFacts().split('\n')
-    clips.ShowGlobals()
-    if request.method == 'POST':
-        return redirect(url_for('expertapp.index'))
-    return render_template('end.html', factResult=factResult)
+    # session.pop('start', None)
 
-@expertapp.route('/end2', methods=['GET', 'POST'])  # localhost:5000/expertapp/
-def end2():
-    session.pop('start', None)
-    factResult = printFacts().split('\n')
-    clips.ShowGlobals()
     if request.method == 'POST':
         return redirect(url_for('expertapp.index'))
-    return render_template('end.html', factResult=factResult)
+    if not ('start' in session):
+        return redirect(url_for('expertapp.index'))
+    factResult = printFacts().split('\n')
+    clips.ShowGlobals()
+
+    seleniumProcesses()
+
+    destinationList = []
+    prepareForDisplay(destinationList)
+
+
+    session.clear()
+
+    return render_template('endDraft.html', destinationList=destinationList)
+
 
 
 @expertapp.route('/question', methods=['GET', 'POST'])  # localhost:5000/expertapp/question1
@@ -97,9 +167,13 @@ def question1():
     print(len(factResult))
 
     if findDestinationCountFact().Slots['count'] == 0 or findDestinationCountFact().Slots['count'] == 1:
+        session['count'] = findDestinationCountFact().Slots['count']
+        session['ask'] = True
         return redirect(url_for('expertapp.end'))
     if findDestinationCountFact().Slots['count'] > 1 and findAskFact() is None:
-        return redirect(url_for('expertapp.end2'))
+        session['count'] = findDestinationCountFact().Slots['count']
+        session['ask'] = False
+        return redirect(url_for('expertapp.end'))
     if not ('start' in session):
         return redirect(url_for('expertapp.index'))
 
