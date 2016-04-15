@@ -17,7 +17,7 @@ TO REMOVE AFTER DESIGN -END -->
 {% block body %}
 
 <div class="container">
-    <p>{{question}}</p>
+    <p class="white-font">{{question}}</p>
 
     <form role="form" method="POST" class="align-left">
         {% for choice in choiceList %}
@@ -31,7 +31,7 @@ TO REMOVE AFTER DESIGN -END -->
         </div>
         {% else %}
         <div class="col-xs-7">
-            <input type="text" class="form-control" id ="textbox" name="{{slotName}}">
+            <input type="text" class="form-control" id ="textbox" placeholder="Enter a number" name="{{slotName}}">
         </div>
 
         {% endif %}

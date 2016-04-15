@@ -1,0 +1,53 @@
+<!-- TO REMOVE AFTER DESIGN -START -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- DAREN'S LOCAL CSS -->
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- TO REMOVE AFTER DESIGN -END -->
+
+{% extends "bare.html" %}
+
+{% block body %}
+
+<div class="container">
+    <p class="white-font">What is your geographic preference?</p>
+
+    <form role="form" method="POST" class="align-left">
+        <div class="radio">
+            <label><input type="radio" name="{{slotName}}" id ="radio" value="{{choice}}" >Beach</label>
+        </div>
+        <div class="radio">
+            <label><input type="radio" name="{{slotName}}" id ="radio" value="{{choice}}" >City</label>
+        </div>
+                <div class="radio">
+            <label><input type="radio" name="{{slotName}}" id ="radio" value="{{choice}}" >Volcano</label>
+        </div>
+                <div class="radio">
+            <label><input type="radio" name="{{slotName}}" id ="radio" value="{{choice}}" >Seaside</label>
+        </div>
+                <div class="radio">
+            <label><input type="radio" name="{{slotName}}" id ="radio" value="{{choice}}" >Mountains</label>
+        </div>
+                <div class="radio">
+            <label><input type="radio" name="{{slotName}}" id ="radio" value="{{choice}}" >Wilderness</label>
+        </div>
+                <div class="radio">
+            <label><input type="radio" name="{{slotName}}" id ="radio" value="{{choice}}" >Island</label>
+        </div>
+
+        <button class="next" type="submit" id="nextBtn" value="next" >next</button>
+    </form>
+
+</div>
+
+
+{% endblock %}
