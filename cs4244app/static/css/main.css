@@ -102,19 +102,18 @@ label:hover {
 }
 
 
-.result-picture {
+.result-picture, .result-pic {
 	width:400px;
 	height:300px;
 	margin:0;
 	padding:0;
-	background: url(../country_img/abudhabi.jpg);
+	background: white;
 	-webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
   	background-size: cover;
 
   	color:white;
-
 }
 
 .result-container {
