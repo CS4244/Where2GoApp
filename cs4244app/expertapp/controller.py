@@ -166,12 +166,15 @@ def question1():
     factResult = printFacts().split('\n')
     print(len(factResult))
 
-    if findDestinationCountFact().Slots['count'] == 0 or findDestinationCountFact().Slots['count'] == 1:
-        session['count'] = findDestinationCountFact().Slots['count']
+
+
+
+    if getTotalDestinationGlobal() == 0 or getTotalDestinationGlobal() == 1:
+        session['count'] = getTotalDestinationGlobal()
         session['ask'] = True
         return redirect(url_for('expertapp.end'))
-    if findDestinationCountFact().Slots['count'] > 1 and findAskFact() is None:
-        session['count'] = findDestinationCountFact().Slots['count']
+    if getTotalDestinationGlobal() > 1 and findAskFact() is None:
+        session['count'] = getTotalDestinationGlobal()
         session['ask'] = False
         return redirect(url_for('expertapp.end'))
     if not ('start' in session):
@@ -244,3 +247,10 @@ def question1():
     #
     #     return render_template('question2.html', title="CS4244 Where2Go", facts=facts.splitlines(),
     #                            factsCount=len(facts.splitlines()))
+
+
+def getTotalDestinationGlobal():
+    for i in clips.GlobalList():
+        if clips.FindGlobal(i).Name == clips.Symbol('totalDestination'):
+            # print(clips.FindGlobal(i).Name)
+            return clips.FindGlobal(i).Value

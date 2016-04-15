@@ -40,6 +40,7 @@
 	(multislot waterActivity (type STRING)(allowed-strings "NULL" "Surfing" "Snorkelling" "Water Skiing" "Water Park" "Wind Surfing" "Dolphin Encounter"))
 	(multislot outdoorActivity (type STRING)(allowed-strings "NULL" "Mountain Biking" "Rock Climbing" "Hiking" "Snow Skiing" "Zip Line" "Horseback Riding"))
 	(slot weather (type STRING) (allowed-strings "NULL" "Hot" "Warm" "Mild" "Cold"))
+	(slot expenditure (type INTEGER))
 )
 
 
@@ -65,9 +66,14 @@
 	(slot count (type INTEGER) (default 0))
 )
 
+(deftemplate reportDest
+(slot currStatus (type STRING) (default "running"))
+(slot finalDest (type STRING) (default "NULL"))
+)
+
 ; ; The initial facts
 (deffacts the-facts
-			(destination (name "Abu Dhabi")(englishSpeaking"No")(visitPreference "Undiscovered" "Romantic" "Peace and Quiet" "Cultural" "Family Friendly")(region "Other")(geography "Beach" "City" "Seaside" "Mountains" "Island")(leisure "Spa" "Shopping" "Theme Park" "Landmarks" "Zoo" "Museum" "Dining")(daysReq -1)(avgHotel 219)(activityType "Water" "Outdoor")(waterActivity "Surfing" "Snorkelling" "Water Skiing" "Water Park" "Wind Surfing" "Dolphin Encounter")(outdoorActivity "Mountain Biking" "Horseback Riding")(weather "Warm"))
+		(destination (name "Abu Dhabi")(englishSpeaking"No")(visitPreference "Undiscovered" "Romantic" "Peace and Quiet" "Cultural" "Family Friendly")(region "Other")(geography "Beach" "City" "Seaside" "Mountains" "Island")(leisure "Spa" "Shopping" "Theme Park" "Landmarks" "Zoo" "Museum" "Dining")(daysReq -1)(avgHotel 219)(activityType "Water" "Outdoor")(waterActivity "Surfing" "Snorkelling" "Water Skiing" "Water Park" "Wind Surfing" "Dolphin Encounter")(outdoorActivity "Mountain Biking" "Horseback Riding")(weather "Warm"))
 (destination (name "Acadia National Park")(englishSpeaking"Yes")(visitPreference "Peace and Quiet" "Family Friendly")(region "North America")(geography "Wilderness" )(leisure "Landmarks" "Zoo" )(daysReq -1)(avgHotel 129)(activityType "Water" "Outdoor")(waterActivity "Water Skiing" )(outdoorActivity "Mountain Biking" "Rock Climbing" "Hiking" "Snow Skiing" "Zip Line" "Horseback Riding")(weather "Cold"))
 (destination (name "Acapulco")(englishSpeaking"Yes")(visitPreference "Romantic" "Peace and Quiet" "Cultural" "NightLife" "Family Friendly")(region "North America")(geography "Beach" "City" "Seaside" "Mountains" )(leisure "Spa" "Zoo" "Dining")(daysReq -1)(avgHotel 214)(activityType "Water" "Outdoor")(waterActivity "Surfing" "Snorkelling" "Water Skiing" "Water Park" "Wind Surfing" "Dolphin Encounter")(outdoorActivity "Horseback Riding")(weather "Warm"))
 (destination (name "Aguadilla")(englishSpeaking"Yes")(visitPreference "Undiscovered" "Peace and Quiet" "Cultural" )(region "Other")(geography "Beach" "Seaside" "Wilderness" "Island")(leisure "Casino" "Theme Park" "Zoo" )(daysReq -1)(avgHotel 183)(activityType "Water" "Outdoor")(waterActivity "Surfing" "Snorkelling" "Water Skiing" "Water Park" "Wind Surfing" )(outdoorActivity "Hiking" "Horseback Riding")(weather "Warm"))
@@ -336,7 +342,7 @@
 (destination (name "Yellowstone National Park")(englishSpeaking"Yes")(visitPreference "Peace and Quiet" "Family Friendly")(region "North America")(geography "Volcano" "Mountains" "Wilderness" )(leisure "Casino" "Landmarks" )(daysReq -1)(avgHotel 142)(activityType "Outdoor")(waterActivity "NULL")(outdoorActivity "Mountain Biking" "Rock Climbing" "Hiking" "Horseback Riding")(weather "Cold"))
 (destination (name "Yosemite National Park")(englishSpeaking"Yes")(visitPreference "Peace and Quiet" "Family Friendly")(region "North America")(geography "Volcano" "Mountains" "Wilderness" )(leisure "Landmarks" "Zoo" )(daysReq -1)(avgHotel 219)(activityType "Outdoor")(waterActivity "NULL")(outdoorActivity "Mountain Biking" "Rock Climbing" "Hiking" "Zip Line" "Horseback Riding")(weather "Mild"))
 (destination (name "Zurich")(englishSpeaking"No")(visitPreference "Romantic" "Peace and Quiet" "Cultural" "NightLife" "Family Friendly")(region "Europe")(geography "City" "Mountains" "Wilderness" )(leisure "Casino" "Shopping" "Theme Park" "Landmarks" "Zoo" "Museum" "Dining")(daysReq -1)(avgHotel 289)(activityType "Water" "Outdoor")(waterActivity "Water Skiing" "Water Park" )(outdoorActivity "Mountain Biking" "Rock Climbing" "Hiking" "Snow Skiing" )(weather "Mild"))
-  
+
   (count destination undone)
     (destinationCount (count 0))
 	(desired)
@@ -346,149 +352,153 @@
 ;;GLOBALS
 (defglobal ?*totalDestination* = 0)
 (defglobal ?*userBudget* = 0)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;FUNCTION
+(deffunction countAllDestinations()
+  return (length$ (find-all-facts ((?f destination)) TRUE))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FIRING FILTERS (normal slot)
 (defrule fireWeatherFilter
 (checkweather on)
 ?desired <- (desired (weather ?desiredW))
-?destination <- (destination (weather ?destW))
-?destinationCount <- (destinationCount (count ?count))
-(test (neq ?desiredW ?destW) )
 =>
-(retract ?destination)
-(bind ?*totalDestination* (- ?*totalDestination* 1))
-(modify ?destinationCount (count (- ?count 1)))
+(do-for-all-facts ((?f destination)) (neq ?f:weather ?desiredW)
+                        (retract ?f))
+
+(bind ?*totalDestination* (countAllDestinations))
 )
 
 (defrule fireEnglishFilter
 (checkenglishSpeaking on)
 ?desired <- (desired (englishSpeaking ?desiredE))
-?destination <- (destination (englishSpeaking ?destE))
-?destinationCount <- (destinationCount (count ?count))
-(test (neq ?desiredE ?destE) )
 =>
-	(retract ?destination)
-(modify ?destinationCount (count (- ?count 1)))
-  (bind ?*totalDestination* (- ?*totalDestination* 1))
+(do-for-all-facts ((?f destination)) (neq ?f:englishSpeaking ?desiredE)
+                        (retract ?f))
+(bind ?*totalDestination* (countAllDestinations))
 )
 
 (defrule fireRegionFilter
 (checkregion on)
 ?desired <- (desired (region ?desiredR))
-?destination <- (destination (region ?destR))
-?destinationCount <- (destinationCount (count ?count))
-(test (neq ?desiredR ?destR) )
 =>
-(retract ?destination)
-(modify ?destinationCount (count (- ?count 1)))
-(bind ?*totalDestination* (- ?*totalDestination* 1))
+(do-for-all-facts ((?f destination)) (neq ?f:region ?desiredR)
+                        (retract ?f))
+(bind ?*totalDestination* (countAllDestinations))
 )
 
 (defrule fireBudgetFilter
-(desired (budget ?budgetDesired))
-(desired (daysReq ?daysReq))
-?destinationCount <- (destinationCount (count ?count))
+(checkbudget on)
+(checkdaysReq on)
+(desired (daysReq ?daysReq) (budget ?budgetDesired))
 (test (> ?daysReq -1))
-(test (> ?budgetDesired -1))
 =>
-(bind ?toMinus 0)
-(do-for-all-facts ((?f destination)) TRUE
-      (if(< ?budgetDesired (* ?daysReq ?f:avgHotel))
-      then
-      (retract ?f)
-      (bind ?toMinus (+ ?toMinus 1))
-      (bind ?*totalDestination* (- ?*totalDestination* 1))
-      else)
-      )
-                  (bind ?count (- ?count ?toMinus))
- (modify ?destinationCount (count ?count))
- (halt)
+(do-for-all-facts ((?f destination)) (< ?budgetDesired (* ?f:avgHotel ?daysReq))
+                        (retract ?f))
+
+(bind ?*totalDestination* (countAllDestinations))
 )
 
 (defrule fireZeroBudgetFilter
 (declare (salience 50))
 (desired (budget ?budgetDesired))
 (test  (= ?budgetDesired 0) )
-?destinationCount <- (destinationCount (count ?count))
 =>
-(bind ?toMinus 0)
 (do-for-all-facts ((?f destination)) TRUE
-       (bind ?toMinus (+ ?toMinus 1))
       (retract ?f))
-      (bind ?count (- ?count ?toMinus))
-       (modify ?destinationCount (count ?count))
-       (halt)
+(bind ?*totalDestination* (countAllDestinations))      
 )
 
 (defrule fireZeroDaysReqFilter
 (declare (salience 50))
 (desired (daysReq ?daysReq))
 (test (= ?daysReq 0))
-?destinationCount <- (destinationCount (count ?count))
 =>
 (do-for-all-facts ((?f destination)) TRUE
-             (bind ?toMinus (+ ?toMinus 1))
       (retract ?f))
-      (bind ?count (- ?count ?toMinus))
-       (modify ?destinationCount (count ?count))
-       (halt)
+(bind ?*totalDestination* (countAllDestinations))
 )
+
+(defrule fireGeographyFilter
+(checkgeography on)
+?desired <- (desired (geography $?desiredR))
+=>
+(do-for-all-facts ((?f destination))  (not(subsetp $?desiredR $?f:geography))
+                        (retract ?f))
+(bind ?*totalDestination* (countAllDestinations))
+)
+
+(defrule fireWaterActivityFilter
+(checkwaterActivity on)
+?desired <- (desired (waterActivity $?desiredR))
+=>
+(do-for-all-facts ((?f destination))  (not(subsetp $?desiredR $?f:waterActivity))
+                        (retract ?f))
+(bind ?*totalDestination* (countAllDestinations))
+)
+
+(defrule fireOutdoorActivityFilter
+(checkoutdoorActivity on)
+?desired <- (desired (outdoorActivity $?desiredR))
+=>
+(do-for-all-facts ((?f destination))  (not(subsetp $?desiredR $?f:outdoorActivity))
+                        (retract ?f))
+(bind ?*totalDestination* (countAllDestinations))
+)
+
+(defrule fireVisitPreferenceFilter
+(checkvisitPreference on)
+?desired <- (desired (visitPreference $?desiredR))
+=>
+(do-for-all-facts ((?f destination))  (not(subsetp $?desiredR $?f:visitPreference))
+                        (retract ?f))
+(bind ?*totalDestination* (countAllDestinations))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; QUESTION FIRING
 
 (defrule fireBudgetQuestion
-(declare (salience 40)) 
 ?desired <- (desired (budget -1))
 =>
 (assert (ask (question "What is your preferred budget? (If $5000.00, please enter 5000) ") (slotName "budget") (questionType "TEXTBOX")))
 )
 
 (defrule fireDaysReqQuestion
-(declare (salience 40)) 
 ?desired <- (desired (daysReq -1))
 =>
 (assert (ask (question "How many days are you planning to spend in the destination? If 5 days, please enter 5") (slotName "daysReq") (questionType "TEXTBOX")))
 )
 
-(defrule calculateExpense
-(desired (budget ?budget))
-(desired (daysReq ?daysReq))
-(test (> ?daysReq -1))
-(test (> ?budget -1))
-=>
-(bind ?*userBudget* (* ?budget ?daysReq))
-)
+
 
 (defrule fireGeographyQuestion
-(declare (salience 40)) 
 ?desired <- (desired (geography "NULL"))
 =>
 (assert (ask (question "What is your geographic preference?") (choice "Beach" "City" "Volcano" "Seaside" "Mountains" "Wilderness" "Island") (slotName "geography") (questionType "RADIO")))
 )
 
 (defrule fireWeatherQuestion
-(declare (salience 40)) 
 ?desired <- (desired (weather "NULL"))
 =>
 (assert (ask (question "What is your ideal weather?") (choice "Hot" "Warm" "Mild" "Cold") (slotName "weather")))
 )
 
 (defrule fireEnglishSpeakingQuestion
-(declare (salience 40)) 
 ?desired <- (desired (englishSpeaking "NULL"))
 =>
 (assert (ask (question "Do you prefer your destination to be an English-speaking destination?") (choice "Yes" "No") (slotName "englishSpeaking")))
 )
 
 (defrule fireRegionQuestion
-(declare (salience 40)) 
 ?desired <- (desired (region "NULL"))
 =>
 (assert (ask (question "What is your ideal destination region?") (choice "North America" "Europe" "Other") (slotName "region")))
 )
 
 (defrule fireVisitPreferenceQuestion
-(declare (salience 40)) 
 ?desired <- (desired (visitPreference "NULL"))
 =>
 (assert (ask (question "Any visit preference?") (choice "Undiscovered" "Romantic" "Peace and Quiet" "Cultural" "Nightlife" "Family Friendly" "Leisure") (slotName "visitPreference") (questionType "RADIO")))
@@ -496,7 +506,6 @@
 
 ;;if leisure chosen previous qn, fire this
 (defrule fireLeisureQuestion
-(declare (salience 40)) 
 (desired (visitPreference "Leisure"))
 ?desired <- (desired (leisure "NULL"))
 =>
@@ -504,21 +513,18 @@
 )
 
 (defrule fireActivityTypeQuestion
-(declare (salience 40)) 
 ?desired <- (desired (activityType "NULL"))
 =>
 (assert (ask (question "What kind of activities do you wish to take part in?") (choice "Outdoor" "Water") (slotName "activityType") (questionType "CHECKBOX")))
 )
 
 (defrule fireWaterActivityQuestion
-(declare (salience 40)) 
 ?desired <- (desired (activityType $?x "Water" $?y) (waterActivity "NULL"))
 =>
 (assert (ask (question "What kind of water activities do you wish to take part in?") (choice "Surfing" "Scuba" "Snorkelling" "Water Skiing" "Water Park" "Wind Surfing" "Dolphin Encounter") (slotName "waterActivity") (questionType "CHECKBOX")))
 )
 
 (defrule fireOutdoorActivityQuestion
-(declare (salience 40)) 
 ?desired <- (desired (activityType $?x "Outdoor" $?y) (outdoorActivity "NULL"))
 =>
 (assert (ask (question "What kind of outdoor activities do you wish to take part in?") (choice "Mountain Biking" "Rock Climbing" "Hiking" "Snow Skiing" "Zip Line" "Horseback Riding") (slotName "outdoorActivity") (questionType "CHECKBOX")))
@@ -527,14 +533,42 @@
 (defrule countAllDestinationsOnce
 (declare (salience 50))
 ?undone<-(count destination undone)
-?destinationCount <- (destinationCount (count ?count))
 (exists (destination))
 =>
 (retract ?undone)
-(do-for-all-facts ((?f destination)) TRUE
-      (bind ?*totalDestination* (+ ?*totalDestination* 1)))
- (bind ?count ?*totalDestination*)
- (modify ?destinationCount (count ?count))
+
+ (bind ?*totalDestination* (countAllDestinations))
 (assert (count destination done))
 )
 
+
+;; if no qns left and destination  = 1
+(defrule reportFinalDest
+(not(exists (ask)))
+(destination (name ?name)(expenditure ?expenditure))
+(reportDest (currStatus ?currStatus) (finalDest ?finalDest))
+(test (= ?*totalDestination* 1))
+=>
+(bind ?currStatus terminated)
+(bind ?finalDest ?name)
+)
+
+;; if no qns left and destination  = 0, status = fail
+(defrule reportNoDest
+(not(exists (ask)))
+(test (= ?*totalDestination* 0))
+=>
+(bind ?currStatus fail)
+)
+
+;; if num of facts more than 1 and no qns,then status =terminate and choose max budget
+(defrule chooseOneDestination
+(not (exists (ask)))
+(test(> ?*totalDestination* 1))
+(reportDest (currStatus ?currStatus) (finalDest ?finalDest))
+(destination (name ?name) (expenditure ?expenditure1))
+(not (destination (expenditure ?expenditure2&:(> ?expenditure2 ?expenditure1))))
+=>
+(bind ?currStatus terminated)
+(bind ?finalDest ?name)
+)
