@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/main.css') }}">
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/main.css" rel="stylesheet">
 </head>
 
 <body class="darken">
@@ -23,7 +23,8 @@
 		<h2>#{{loop.index}}<br>
 		{{i['name']}}</h2>
 
-    <img class="result-pic" src="{{ url_for('static', filename=i['picture']) }}"></img>
+      <!-- <img src="{{ url_for('static', filename=i['picture']) }}"></img> --> 
+      <img class="result-pic" src="../../static/country_img/AbuDhabi.jpg"></img>
 	</div>
 
 	<div class="result-desc">
