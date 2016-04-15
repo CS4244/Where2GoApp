@@ -31,21 +31,18 @@
     
        {% for j in i['leisure'] %}
 				<span>{{j}}</span>
-        <br />
           {% endfor %}
 
 		<p>Water Activities</p>
 
 				  {% for j in i['waterActivity'] %}
 				<span>{{j}}</span>
-        <br />
           {% endfor %}
 
 		<p>Outdoor Activites</p>
 	
 				  {% for j in i['outdoorActivity'] %}
 				<span>{{j}}</span>
-        <br />
           {% endfor %}
 	</div>
     {% endfor %}
@@ -57,7 +54,7 @@
     {% endif %}
     
     <form role="form" method="POST">
-      <button type="submit" id = "homeBtn" name= "homeBtn" value = "Home" >start</button>
+     <button class="end" type="submit" value="next">home</button>
     </form>
     	
 

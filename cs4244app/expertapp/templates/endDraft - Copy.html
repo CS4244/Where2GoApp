@@ -1,0 +1,64 @@
+<!-- TO REMOVE AFTER DESIGN -START--> 
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/main.css" rel="stylesheet">
+</head>
+
+<body class="darken">
+<!-- TO REMOVE AFTER DESIGN -END -->
+
+{% extends "bare.html" %}
+
+{% block body %}
+
+<div class="result-container">
+
+	<div class="result-picture">
+		<h2>#1<br>
+		<!--{% block %}-->
+		Abu Dhabi</h2>
+	</div>
+
+	<div class="result-desc">
+		<p>Leisure</p>
+				<!--{% block %}-->
+				<span>Casino</span>
+				<span>Spa</span>
+				<span>Shopping</span>
+				<span>Theme Park</span>
+				<span>Landmarks</span>
+				<span>Zoo</span>
+				<span>Museum</span>
+				<span>Dining</span>
+		<p>Water Activities</p>
+				<!--{% block %}-->
+				<span>Surfing</span>
+				<span>Snorkelling</span>
+				<span>Water Skiing</span>
+				<span>Water Park</span>
+				<span>Wind Surfing</span>
+				<span>Dolphin Encounter</span>	
+		<p>Outdoor Activites</p>
+				<!--{% block %}-->
+				<span>Mountain Biking</span>
+				<span>Rock Climbing</span>
+				<span>Hiking</span>
+				<span>Snow Skiing</span>
+				<span>Zip Line</span>
+				<span>Horseback Riding</span>
+	</div>
+
+    <form role="form" method="POST">
+    	<h4><i>This is our recommendation!<br>Thank you for using Where2Go.</i></h4>
+    	<button class="end" type="submit" value="next">restart</button>
+    	<button class="end" type="submit" value="next">home</button>
+    </form>
+</div>
+
+
+{% endblock %}

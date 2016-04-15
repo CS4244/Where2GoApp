@@ -1,0 +1,48 @@
+<!-- TO REMOVE AFTER DESIGN -START 
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+TO REMOVE AFTER DESIGN -END -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src=" {{ url_for('static', filename = 'js/vendor/typed.js') }}"></script>
+<link rel="stylesheet" href=" {{ url_for('static', filename = 'css/animate.css') }}">
+{% extends "bare.html" %}
+
+{% block body %}
+<div class="container no-bg">
+
+    <h1 class="app">Where2Go</h1>
+<h5>Look for the perfect destination<br>Start creating new memories</h5>
+ <!--<div class="element"></div>-->
+    <form action="." method="POST">
+        <button type="submit" id="beginBtn" name="beginbtn" value="BEGIN">start</button>
+    </form>
+</div>
+
+
+<script>
+    $(function(){
+        $(".element").typed({
+            strings: ["Look for the perfect destination", "Start creating new memories"],
+            typeSpeed: 100
+        });
+
+
+            $('.app').addClass('animated swing').one();
+
+
+    });
+
+</script>
+
+{% endblock %}
+
+
