@@ -3,10 +3,12 @@ import clips
 import sys
 import cStringIO
 import os, json
+from . import environmentList, environmentDict
+
 invalidChars = ['-', ',', ' ', '.', '_']
 countriesImgPath = 'http://localhost:5000/static/img/countries/'
 
-expertapp = Blueprint('expertapp', __name__, template_folder='templates')
+expertapp1 = Blueprint('expertapp', __name__, template_folder='templates')
 
 intFact = ['budget', 'daysReq']
 
@@ -19,13 +21,13 @@ intFact = ['budget', 'daysReq']
 
 
 def getDestinationFact():
-    for i in clips.FactList():
+    for i in environmentDict.get(session['clips']).FactList():
         if i.Relation == clips.Symbol('destination'):
             return i
     return None
 
 def findDestinationCountFact():
-    for i in clips.FactList():
+    for i in environmentDict.get(session['clips']).FactList():
         if i.Relation == clips.Symbol('destinationCount'):
             return i
     return None
@@ -35,7 +37,7 @@ def printFacts():
     stdout_ = sys.stdout
     stream = cStringIO.StringIO()
     sys.stdout = stream
-    clips.PrintFacts()
+    environmentDict.get(session['clips']).PrintFacts()
     facts = stream.getvalue()
     sys.stdout = stdout_
     return facts
@@ -50,7 +52,7 @@ def getSlotTypeInAskFact():
 
 
 def findAskFact():
-    for i in clips.FactList():
+    for i in environmentDict.get(session['clips']).FactList():
         if i.Relation == clips.Symbol('ask'):
             return i
     return None
@@ -65,13 +67,13 @@ def getChoiceInAskFact():
 
 
 def findDesiredFact():
-    for i in clips.FactList()[::-1]:
+    for i in environmentDict.get(session['clips']).FactList()[::-1]:
         if i.Relation == clips.Symbol('desired'):
             return i
 
 def setup():
     countryDict = {}
-    for i in clips.FactList():
+    for i in environmentDict.get(session['clips']).FactList():
         if i.Relation == clips.Symbol('destination'):
             countryDict[i.Slots['name']] = 0
 
@@ -87,14 +89,14 @@ def seleniumProcesses():
         with open('countries.json') as file:
             countriesDict = json.load(file)
 
-        for i in clips.FactList():
+        for i in environmentDict.get(session['clips']).FactList():
             if i.Relation == clips.Symbol('destination'):
                 countriesDict[i.Slots['name']] += 1
         with open("countries.json", 'w') as outfile:
             json.dump(countriesDict, outfile, indent=1)
 
 def prepareForDisplay(destinationList):
-    for i in clips.FactList():
+    for i in environmentDict.get(session['clips']).FactList():
         if i.Relation == clips.Symbol('destination'):
             destinationDict = {}
             strippedInvalidName = ''.join([j for j in i.Slots['name'] if j not in invalidChars])
@@ -126,19 +128,24 @@ def prepareForDisplay(destinationList):
 
             destinationList.append(destinationDict)
     print(destinationList)
-@expertapp.route('/', methods=['GET', 'POST'])  # localhost:5000/expertapp/
+@expertapp1.route('/', methods=['GET', 'POST'])  # localhost:5000/expertapp/
 def index():
-    clips.Reset()
-    clips.Run()
+    if len(environmentList) == 0:
+        return  render_template('begin.html', freeSlots = 0)
+
     if request.method == 'POST':
         if request.form['beginbtn'] == "BEGIN":
+            session['clips'] = environmentList[len(environmentList) - 1]
+            environmentList.pop()
+            environmentDict[session['clips']].Reset()
+            environmentDict[session['clips']].Run()
             session['start'] = True
             return redirect(url_for('expertapp.question1'))
 
-    return render_template('begin.html')
+    return render_template('begin.html', freeSlots = len(environmentList))
 
 
-@expertapp.route('/end', methods=['GET', 'POST'])  # localhost:5000/expertapp/
+@expertapp1.route('/end', methods=['GET', 'POST'])  # localhost:5000/expertapp/
 def end():
     # session.pop('start', None)
 
@@ -146,22 +153,27 @@ def end():
         return redirect(url_for('expertapp.index'))
     if not ('start' in session):
         return redirect(url_for('expertapp.index'))
+
     factResult = printFacts().split('\n')
-    clips.ShowGlobals()
+    for i in factResult:
+        print(i)
+
+    environmentDict.get(session['clips']).ShowGlobals()
+
 
     seleniumProcesses()
 
     destinationList = []
     prepareForDisplay(destinationList)
 
-
+    environmentList.append(session['clips'])
     session.clear()
 
     return render_template('endDraft.html', destinationList=destinationList)
 
 
 
-@expertapp.route('/question', methods=['GET', 'POST'])  # localhost:5000/expertapp/question1
+@expertapp1.route('/question', methods=['GET', 'POST'])  # localhost:5000/expertapp/question1
 def question1():
     factResult = printFacts().split('\n')
     print(len(factResult))
@@ -210,17 +222,17 @@ def question1():
                 combinedSlots += i
 
         toModify = '(modify ' + str(findDesiredFact().Index) + ' (' + dictKey + combinedSlots + '))'
-        clips.SendCommand(toModify)
+        environmentDict.get(session['clips']).SendCommand(toModify)
         findAskFact().Retract()
-        clips.Assert("(check" + dictKey + " on)")
-        clips.Run()
-        clips.DebugConfig.ActivationsWatched = True
-        clips.DebugConfig.FactsWatched = True
-        clips.DebugConfig.RulesWatched = True
-        t = clips.TraceStream.Read()
-        print t
-        clips.ShowGlobals()
-        clips.PrintFacts()
+        environmentDict.get(session['clips']).Assert("(check" + dictKey + " on)")
+        environmentDict.get(session['clips']).Run()
+        # environmentDict.get(session['clips']).DebugConfig.ActivationsWatched = True
+        # environmentDict.get(session['clips']).DebugConfig.FactsWatched = True
+        # environmentDict.get(session['clips']).DebugConfig.RulesWatched = True
+        # t = environmentDict.get(session['clips']).TraceStream.Read()
+        # print t
+        environmentDict.get(session['clips']).ShowGlobals()
+        environmentDict.get(session['clips']).PrintFacts()
         return redirect(url_for('expertapp.question1'))
     return render_template('question.html', choiceList=getChoiceInAskFact(), question=getQuestionInAskFact(),
                            slotName=getSlotTypeInAskFact(), questionType=getQuestionTypeInAskFact(),
@@ -250,7 +262,7 @@ def question1():
 
 
 def getTotalDestinationGlobal():
-    for i in clips.GlobalList():
-        if clips.FindGlobal(i).Name == clips.Symbol('totalDestination'):
+    for i in environmentDict.get(session['clips']).GlobalList():
+        if environmentDict.get(session['clips']).FindGlobal(i).Name == clips.Symbol('totalDestination'):
             # print(clips.FindGlobal(i).Name)
-            return clips.FindGlobal(i).Value
+            return environmentDict.get(session['clips']).FindGlobal(i).Value
