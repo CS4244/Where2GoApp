@@ -9,56 +9,62 @@
     <link rel="stylesheet" href="{{ url_for('static', filename = 'css/main.css') }}">
 </head>
 
-<body class="darken">
+<body>
 <!-- TO REMOVE AFTER DESIGN -END -->
 
 {% extends "bare.html" %}
 
 {% block body %}
 
-<div class="result-container">
-    {% if destinationList|length > 0 %}
-    {% for i in destinationList %}
-	<div class="result-picture">
-		<h2>#{{loop.index}}<br>
-		{{i['name']}}</h2>
+<div class="col-md-12">
 
-    <img class="result-pic" src="{{ url_for('static', filename=i['picture']) }}"></img>
-	</div>
+{% if destinationList|length > 0 %}
+{% for i in destinationList %}
 
-	<div class="result-desc">
-		<p>Leisure</p>
-    
-       {% for j in i['leisure'] %}
-				<span>{{j}}</span>
-          {% endfor %}
+  <div class="col-md-4 col-xs-12">
+    <div class="result-container">
+    	<div class="result-picture">
+    		<h2>#{{loop.index}}<br>
+    		{{i['name']}}</h2>
 
-		<p>Water Activities</p>
+        <img class="result-pic" src="{{ url_for('static', filename=i['picture']) }}"></img>
+    	</div>
 
-				  {% for j in i['waterActivity'] %}
-				<span>{{j}}</span>
-          {% endfor %}
+    	<div class="result-desc">
+    		<p>Leisure</p>
+        
+           {% for j in i['leisure'] %}
+    				<span>{{j}}</span>
+              {% endfor %}
 
-		<p>Outdoor Activites</p>
-	
-				  {% for j in i['outdoorActivity'] %}
-				<span>{{j}}</span>
-          {% endfor %}
-	</div>
-    {% endfor %}
-   <h4><i>This is our recommendation!<br>Thank you for using Where2Go.</i></h4> 
-    
+    		<p>Water Activities</p>
+
+    				  {% for j in i['waterActivity'] %}
+    				<span>{{j}}</span>
+              {% endfor %}
+
+    		<p>Outdoor Activites</p>
+    	
+    				  {% for j in i['outdoorActivity'] %}
+    				<span>{{j}}</span>
+              {% endfor %}
+    	</div>
+
+  </div>
+</div>
+
+{% endfor %}
+
+<div class="modal-footer">
+  <form role="form" method="POST">
+    <h4><i>This is our recommendation!<br>Thank you for using Where2Go.</i></h4>
     {% else %}
     <span>Sorry no result found</span>
     <br />
     {% endif %}
-    
-    <form role="form" method="POST">
-     <button class="end" type="submit" value="next">home</button>
-    </form>
-    	
-
-</div>
+    <button class="end" type="submit" value="next">home</button>
+  </form>
+<div>
 
 
 {% endblock %}
