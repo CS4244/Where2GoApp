@@ -175,6 +175,9 @@ def end():
 
 @expertapp1.route('/question', methods=['GET', 'POST'])  # localhost:5000/expertapp/question1
 def question1():
+
+    if not ('start' in session):
+        return redirect(url_for('expertapp.index'))
     factResult = printFacts().split('\n')
     print(len(factResult))
 
@@ -189,8 +192,7 @@ def question1():
         session['count'] = getTotalDestinationGlobal()
         session['ask'] = False
         return redirect(url_for('expertapp.end'))
-    if not ('start' in session):
-        return redirect(url_for('expertapp.index'))
+
 
     # aaa = findDesiredFact()
     # tempMod1 = '(modify '+str(aaa.Index)+' (englishSpeaking "Yes"))'
