@@ -55,16 +55,20 @@
 
 {% endfor %}
 
-<div class="modal-footer">
-  <form role="form" method="POST">
-    <h4><i>This is our recommendation!<br>Thank you for using Where2Go.</i></h4>
+    <h4><i>This is our recommendation!</i></h4>
     {% else %}
     <span>Sorry no result found</span>
     <br />
     {% endif %}
-    <button class="end" type="submit" value="next">home</button>
+
+   <div class="modal-footer">
+   <br>
+   <h4><i>Thank you for using Where2Go.</i></h4>
+  <form role="form" method="POST">
+      <button class="end" type="submit" value="next">home</button>
   </form>
-<div>
+  <div>
+
 
 
 {% endblock %}
