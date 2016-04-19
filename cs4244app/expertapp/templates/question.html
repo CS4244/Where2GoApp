@@ -37,7 +37,7 @@ TO REMOVE AFTER DESIGN -END -->
         {% endif %}
         {% endfor %}
         <br>
-        <button class="next" type="submit" id="nextBtn" value="next" >next</button>
+        <button class="next" type="submit" id="nextBtn" value="next"    onclick="this.disabled=true;this.value='Submitting...'; this.form.submit();">next</button>
     </form>
     {% if error %}
     <br/>
