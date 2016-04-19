@@ -16,6 +16,7 @@ bClips = clips.Environment()
 environmentList = []
 
 environmentDict = {}
+enviromentUsageDict = {}
 # environmentDict['a'] = aClips
 # environmentDict['b'] = bClips
 
@@ -24,6 +25,7 @@ for i in range(50):
         environmentList.append(i)
         environmentDict[i] = clips.Environment()
         environmentDict.get(i).Load(myPath)
+        enviromentUsageDict[i] = 0
 
 
 # for key, value in environmentDict.iteritems():

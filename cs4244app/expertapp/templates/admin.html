@@ -1,0 +1,45 @@
+<!-- TO REMOVE AFTER DESIGN -START 
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+TO REMOVE AFTER DESIGN -END -->
+
+{% extends "bare.html" %}
+
+{% block body %}
+
+<div>
+    <tr>
+        <td>Environment</td>
+        <td>Minutes Elasped</td>
+        <br/>
+        {% for key, value in environmentUsageDict.iteritems() %}
+
+
+        {% if value > 0 %}
+    <tr>
+        <td>{{ key }}</td>
+        <td>{{ (time - value) /60 }}</td>
+    </tr>
+    <form role="form" method="POST">
+        <button type="submit" name="resetBtn" value="{{key}}">Reset User</button>
+    </form>
+
+
+    {% endif %}
+    {% endfor %}
+    </tr>
+
+
+</div>
+
+
+{% endblock %}

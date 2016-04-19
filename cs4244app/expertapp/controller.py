@@ -2,8 +2,8 @@ from flask import render_template, url_for, request, redirect, Blueprint, sessio
 import clips
 import sys
 import cStringIO
-import os, json
-from . import environmentList, environmentDict
+import os, json, time
+from . import environmentList, environmentDict, enviromentUsageDict
 
 invalidChars = ['-', ',', ' ', '.', '_']
 countriesImgPath = 'http://localhost:5000/static/img/countries/'
@@ -139,6 +139,7 @@ def index():
             environmentList.pop()
             environmentDict[session['clips']].Reset()
             environmentDict[session['clips']].Run()
+            enviromentUsageDict[session['clips']] = int(time.time())
             session['start'] = True
             return redirect(url_for('expertapp.question1'))
 
@@ -167,6 +168,7 @@ def end():
     prepareForDisplay(destinationList)
 
     environmentList.append(session['clips'])
+    enviromentUsageDict[session['clips']] = 0
     session.clear()
 
     return render_template('endDraft.html', destinationList=destinationList)
@@ -268,3 +270,17 @@ def getTotalDestinationGlobal():
         if environmentDict.get(session['clips']).FindGlobal(i).Name == clips.Symbol('totalDestination'):
             # print(clips.FindGlobal(i).Name)
             return environmentDict.get(session['clips']).FindGlobal(i).Value
+
+@expertapp1.route('/admin', methods=['GET', 'POST'])  # localhost:5000/expertapp/question1
+def admin():
+    if request.method == 'POST':
+        if request.form['resetBtn']:
+            print(request.form)
+            print(request.form['resetBtn'])
+            environmentList.append(int (request.form['resetBtn']))
+            enviromentUsageDict[int (request.form['resetBtn'])] = 0
+            print(enviromentUsageDict)
+        return redirect(url_for('expertapp.admin'))
+
+
+    return render_template('admin.html', environmentUsageDict= enviromentUsageDict, time = int(time.time()))
