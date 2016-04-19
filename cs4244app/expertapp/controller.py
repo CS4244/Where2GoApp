@@ -135,8 +135,7 @@ def index():
 
     if request.method == 'POST':
         if request.form['beginbtn'] == "BEGIN":
-            session['clips'] = environmentList[len(environmentList) - 1]
-            environmentList.pop()
+            session['clips'] = environmentList.pop()
             environmentDict[session['clips']].Reset()
             environmentDict[session['clips']].Run()
             enviromentUsageDict[session['clips']] = int(time.time())
